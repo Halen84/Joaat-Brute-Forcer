@@ -26,3 +26,6 @@
 # String Hash Mode
 - Allows you to generate the JOAAT hash of strings
 - Just start inputting your strings in the hash list text box
+
+# Tip for faster brute forcing
+- Create smaller dictionaries with specific words that might be in the hashes you are brute forcing
