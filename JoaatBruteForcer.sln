@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoaatBruteForcer", "JoaatBruteForcer.csproj", "{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Debug|Any CPU.Build.0 = Debug|x64
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Debug|x64.ActiveCfg = Debug|x64
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Debug|x64.Build.0 = Debug|x64
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Release|x64.ActiveCfg = Release|x64
+		{5A6C3608-44D9-4631-8348-A47B8A6EEB4C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A1D5D61-5BEA-42CE-942E-8F86690F8AE5}
+	EndGlobalSection
+EndGlobal
