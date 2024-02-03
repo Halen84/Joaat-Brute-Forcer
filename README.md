@@ -18,6 +18,24 @@
 	- Example w/ dictionary named "list.strings.txt":  **Some{strings\*U}String**
 - By default, the string case of the dictionary will be whatever it is in the file if no custom format option was put on it.
 
+# How the brute forcer works
+- The brute forcer gets ALL possible string combinations from the dictionaries you put in the format
+	- This is why the more dictionaries you add, the slower it gets. Smaller dictionaries will allow you to add more in the format
+- Here's what it does internally. Example format:  **{strings1}_{strings2}**
+```
+first_first
+first_second
+first_third
+second_first
+second_second
+second_third
+third_first
+third_second
+third_third
+
+etc
+```
+
 # Hash List Info
 - The hash list accepts both hexadecimal and decimal numbers.
 - It will trim all trailing and leading whitespace before starting a brute force.
