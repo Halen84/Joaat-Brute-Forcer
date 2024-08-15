@@ -16,6 +16,8 @@ namespace JoaatBruteForcer
 		public const int MAX_DICTIONARY_COUNT = 10;
 
 		public static bool bStringHashMode = false;
+		public static bool bUnsignedIntegers = false;
+		public static bool bRealTimeUIUpdates = true;
 		public static eOutputMode OutputMode = eOutputMode.kBoth;
 		public static string pCustomOutputFormat = string.Empty;
 		public static string pBruteForceFormat = string.Empty;

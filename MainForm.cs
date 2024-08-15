@@ -17,6 +17,8 @@ namespace JoaatBruteForcer
 
 			// Options
 			cbStringHashMode.Checked = Settings.bStringHashMode;
+			cbUnsigned.Checked = Settings.bUnsignedIntegers;
+			cbRealTimeUpdates.Checked = Settings.bRealTimeUIUpdates;
 			// Output
 			rbStringOnly.Checked = Settings.OutputMode == eOutputMode.kString;
 			rbHex.Checked = Settings.OutputMode == eOutputMode.kHexadecimal;
@@ -51,7 +53,6 @@ namespace JoaatBruteForcer
 			gbHashOptions.Enabled = flag;
 			gbOutput.Enabled = flag;
 			btnSaveToFile.Enabled = flag;
-			//btnStartPauseResume.Enabled = flag;
 			tbHashList.ReadOnly = !flag;
 			tbHashList.BackColor = Color.White;
 			tbFormat.Enabled = flag;
@@ -233,9 +234,6 @@ namespace JoaatBruteForcer
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			Settings.pCustomOutputFormat = tbCustomOutput.Text;
-			Settings.Save();
-
 			if (CBruteForceMgr.IsRunning() || CBruteForceMgr.IsPaused())
 			{
 				var r = CMessageBox.Warn("WARNING: A brute force is currently ongoing. Are you sure you want to close the application?", MessageBoxButtons.YesNoCancel);
@@ -243,7 +241,14 @@ namespace JoaatBruteForcer
 				{
 					e.Cancel = true;
 				}
+				else
+				{
+					CBruteForceMgr.Abort();
+				}
 			}
+
+			Settings.pCustomOutputFormat = tbCustomOutput.Text;
+			Settings.Save();
 		}
 
 		private void tbHashList_TextChanged(object sender, EventArgs e)
@@ -305,10 +310,18 @@ namespace JoaatBruteForcer
 
 				SetComponentsEnabled(false);
 				tbOutput.Clear();
-				lblPercent.Text = "0.00%";
-				lblTimeRemaining.Text = "EST Time Remaining: Calculating...";
 				bruteForceprogressBar.Value = 0;
 				btnStartPauseResume.Text = "Pause";
+				if (Settings.bRealTimeUIUpdates)
+				{
+					lblPercent.Text = "0.00%";
+					lblTimeRemaining.Text = "EST Time Remaining: Calculating...";
+				}
+				else
+				{
+					lblPercent.Text = "";
+					lblTimeRemaining.Text = "Brute Force In Progress...";
+				}
 
 				if (cbStringHashMode.Checked)
 				{
@@ -324,12 +337,14 @@ namespace JoaatBruteForcer
 			{
 				btnStartPauseResume.Text = "Resume";
 				this.Text = "JOAAT Brute Forcer by Tuffy [PAUSED]";
+				gbOutput.Enabled = true;
 				CBruteForceMgr.Pause();
 			}
 			else if (CBruteForceMgr.IsPaused())
 			{
 				btnStartPauseResume.Text = "Pause";
 				this.Text = "JOAAT Brute Forcer by Tuffy";
+				gbOutput.Enabled = false;
 				CBruteForceMgr.Resume();
 			}
 		}
@@ -365,6 +380,12 @@ namespace JoaatBruteForcer
 				rbHex.Checked = true;
 			}
 		}
+
+		private void cbRealTimeUpdates_CheckedChanged(object sender, EventArgs e)
+		=> Settings.bRealTimeUIUpdates = cbRealTimeUpdates.Checked;
+
+		private void cbUnsigned_CheckedChanged(object sender, EventArgs e)
+		=> Settings.bUnsignedIntegers = cbUnsigned.Checked;
 
 		#endregion
 

@@ -5,18 +5,17 @@ using System.Threading;
 
 
 // TODO:
-// Thread Pooling (maybe?)
-// Parallelism - Not sure how to go about doing this since each thread relies on each other
+// GPU Acceleration - ILGPU?
 
 
 namespace JoaatBruteForcer
 {
 	internal static class CBruteForceMgr
 	{
-#pragma warning disable 8618
+#pragma warning disable CS8618
 		// Main Form
 		private static MainForm _mainForm;
-#pragma warning restore 8618
+#pragma warning restore CS8618
 		// Regex for finding hexadecimal numbers in the hash list
 		private static Regex _hexRegex = new Regex(@"0x[A-F0-9]+", RegexOptions.IgnoreCase);
 
@@ -30,6 +29,7 @@ namespace JoaatBruteForcer
 		private static string[] _threadDictionaryData = Array.Empty<string>();
 		// Array of all dictionaries being used
 		private static sDictionary[] _dictionaries = Array.Empty<sDictionary>();
+
 
 		// Current state of the brute force
 		private static eBruteForceState _state = eBruteForceState.Inactive;
@@ -200,7 +200,7 @@ namespace JoaatBruteForcer
 			}
 			else if (dictionary.FirstLetterLowercase)
 			{
-				if (!string.IsNullOrWhiteSpace(str) && char.IsUpper(str[0]))
+				if (char.IsUpper(str[0]))
 				{
 					str = string.Concat(char.ToLower(str[0]), str.Substring(1));
 				}
@@ -236,13 +236,27 @@ namespace JoaatBruteForcer
 			switch (Settings.OutputMode)
 			{
 				case eOutputMode.kBoth:
-					result = string.Concat(key, " = ", "0x", hash.ToString("X8"), " (", ((int)hash).ToString(), ")");
+					if (Settings.bUnsignedIntegers)
+					{
+						result = string.Concat(key, " = ", "0x", hash.ToString("X8"), " (", (hash).ToString(), ")");
+					}
+					else
+					{
+						result = string.Concat(key, " = ", "0x", hash.ToString("X8"), " (", ((int)hash).ToString(), ")");
+					}
 					break;
 				case eOutputMode.kHexadecimal:
 					result = string.Concat(key, " = ", "0x", hash.ToString("X8"));
 					break;
 				case eOutputMode.kDecimal:
-					result = string.Concat(key, " = ", ((int)hash).ToString());
+					if (Settings.bUnsignedIntegers)
+					{
+						result = string.Concat(key, " = ", (hash).ToString());
+					}
+					else
+					{
+						result = string.Concat(key, " = ", ((int)hash).ToString());
+					}
 					break;
 				case eOutputMode.kString:
 					result = key;
@@ -252,19 +266,25 @@ namespace JoaatBruteForcer
 					{
 						_outputFormat = _mainForm.GetOutputFormat();
 					}
-					// if this errors, then it means there was a misspelling with one of the options
+
+					// if string.Format errors, then it means there was a misspelling with one of the options
 					// {0} = {hash}, {1} = {hex}, {2} = {dec}
-					result = string.Format(_outputFormat, key, "0x" + hash.ToString("X8"), ((int)hash).ToString());
+					if (Settings.bUnsignedIntegers)
+					{
+						result = string.Format(_outputFormat, key, "0x" + hash.ToString("X8"), (hash).ToString());
+					}
+					else
+					{
+						result = string.Format(_outputFormat, key, "0x" + hash.ToString("X8"), ((int)hash).ToString());
+					}
 				break;
 			}
 
 			// We're only appending tbOutput here because we want to let the
 			// user know that we found a hash now, instead of telling them at the end.
 			//
-			// This may make the brute forcer slower though. TODO: Maybe an option to disable this?
-			//
 			// Don't append text here if we're in string hash mode, it will be appended when its done generating hashes
-			if (!Settings.bStringHashMode)
+			if (!Settings.bStringHashMode && Settings.bRealTimeUIUpdates)
 			{
 				_mainForm.Invoke(() => _mainForm.tbOutput.AppendText(result + "\r\n"));
 			}
@@ -337,10 +357,9 @@ namespace JoaatBruteForcer
 #pragma warning restore 8605
 
 			sDictionary dictionary = _dictionaries[idx];
-			Span<string> data = dictionary.Data;
+			ReadOnlySpan<string> data = dictionary.Data;
 			int len = data.Length;
 
-			//StringBuilder lineBuilder = new StringBuilder(szFormat);
 			for (int i = 0; i < len; i++)
 			{
 				if (_abort) { break; }
@@ -352,16 +371,9 @@ namespace JoaatBruteForcer
 				line = string.Format(_format, _threadDictionaryData);
 				CheckString(line);
 
-				/*lineBuilder.Clear();
-				lineBuilder.AppendFormat(szFormat, aDictionaryThreadArray);
-				string line = lineBuilder.ToString();
-				CheckString(line);*/
-
 				if (idx != _dictionaryCount - 1)
 				{
-					Thread thread = new Thread(WorkerThreadFunction);
-					thread.Start(idx + 1);
-					thread.Join();
+					WorkerThreadFunction(idx + 1);
 				}
 			}
 		}
@@ -382,18 +394,17 @@ namespace JoaatBruteForcer
 			_state = eBruteForceState.Running;
 
 			// This is kinda lame as fuck
-			if (_dictionaryCount > 1)
+			if (_dictionaryCount > 1 && Settings.bRealTimeUIUpdates)
 			{
-				Thread thread = new Thread(UpdateTextLabels);
+				Thread thread = new(UpdateTextLabels);
 				thread.Start(); // Don't join
 			}
 
 			// 0 is this thread
 			sDictionary dictionary = _dictionaries[0];
-			Span<string> data = dictionary.Data;
+			ReadOnlySpan<string> data = dictionary.Data;
 			int len = data.Length;
 
-			//StringBuilder lineBuilder = new StringBuilder(szFormat);
 			__start = DateTime.Now;
 			__count = len;
 			for (int i = 0; i < len; i++)
@@ -404,14 +415,11 @@ namespace JoaatBruteForcer
 				string line = data[i];
 				SetStringCase(ref line, ref dictionary);
 				_threadDictionaryData[0] = line;
-				line = string.Format(_format, _threadDictionaryData);
+				// This is faster than StringBuilder apparently
+				line = string.Format(_format, _threadDictionaryData); // TODO: Any faster way to do this instead of string.Format? This is too slow
 				CheckString(line);
 
-				/*lineBuilder.Clear();
-				lineBuilder.AppendFormat(szFormat, aDictionaryThreadArray);
-				string line = lineBuilder.ToString();
-				CheckString(line);*/
-
+				// I feel like this is pretty inefficient and could be done better
 				if (_dictionaryCount > 1)
 				{
 					Thread thread = new Thread(WorkerThreadFunction);
@@ -419,15 +427,15 @@ namespace JoaatBruteForcer
 					thread.Join();
 				}
 
-				__index = i;
-				__update = true;
-				// Cross-thread operation but I don't care
-				_percentCompleted = (i + 1.0f) * _mainForm.bruteForceprogressBar.Maximum / (float)len;
-				// Cross-thread operation but I don't care
-				_mainForm.bruteForceprogressBar.Value = (int)_percentCompleted;
+				if (Settings.bRealTimeUIUpdates)
+				{
+					__index = i;
+					__update = true;
+					// Cross-threaded operations here but I don't care (needs to be moved)
+					_percentCompleted = (i + 1.0f) * _mainForm.bruteForceprogressBar.Maximum / (float)len;
+					_mainForm.bruteForceprogressBar.Value = (int)_percentCompleted;
+				}
 			}
-
-			_percentCompleted = 100.0f;
 
 			if (!_abort)
 			{
@@ -435,9 +443,11 @@ namespace JoaatBruteForcer
 			}
 			else
 			{
-				_mainForm.lblPercent.Invoke(() => _mainForm.lblPercent.Text += " (" + Stopwatch.GetElapsedTime(_startTime).ToString(@"hh\:mm\:ss\.ff") + ")");
+				_mainForm.lblPercent.Invoke(() => _mainForm.lblPercent.Text += " (" + Stopwatch.GetElapsedTime(_startTime).ToString(@"hh\:mm\:ss\.ff") + ") (Aborted)");
 			}
 			_mainForm.lblPercent.Invoke(() => _mainForm.lblTimeRemaining.Text = "EST Time Remaining: 00:00:00");
+			
+			_percentCompleted = 100.0f;
 
 			CompleteBruteForce();
 		}
@@ -478,6 +488,15 @@ namespace JoaatBruteForcer
 		{
 			_mainForm.Invoke(() => _mainForm.SetComponentsEnabled(true));
 			_mainForm.Invoke(_mainForm.SetMiscComponents);
+
+			if (!Settings.bRealTimeUIUpdates)
+			{
+				_mainForm.Invoke(() =>
+				{
+					_mainForm.tbOutput.Text = _matchedStrings.ToString();
+					_mainForm.bruteForceprogressBar.Value = 100;
+				});
+			}
 
 			if (_state == eBruteForceState.Running || Settings.bStringHashMode)
 			{

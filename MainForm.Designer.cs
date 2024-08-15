@@ -41,6 +41,8 @@
 			cbStringHashMode = new CheckBox();
 			rbCustom = new RadioButton();
 			label1 = new Label();
+			cbRealTimeUpdates = new CheckBox();
+			cbUnsigned = new CheckBox();
 			gbHashOptions = new GroupBox();
 			gbOutput = new GroupBox();
 			tbCustomOutput = new TextBox();
@@ -53,7 +55,6 @@
 			lblOutput = new Label();
 			lblHashList = new Label();
 			lblTimeRemaining = new Label();
-			cbUnsigned = new CheckBox();
 			gbHashOptions.SuspendLayout();
 			gbOutput.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -166,7 +167,7 @@
 			cbStringHashMode.Size = new Size(121, 19);
 			cbStringHashMode.TabIndex = 5;
 			cbStringHashMode.Text = "String Hash Mode";
-			toolTip1.SetToolTip(cbStringHashMode, "Generate JOAAT hashes from strings in the hash list");
+			toolTip1.SetToolTip(cbStringHashMode, "Instead of brute forcing hashes in the hash list, the program will generate the joaat hash of the strings in the hash list");
 			cbStringHashMode.UseVisualStyleBackColor = true;
 			cbStringHashMode.CheckedChanged += cbStringHashMode_CheckedChanged;
 			// 
@@ -193,10 +194,35 @@
 			label1.Text = "Brute Force Format";
 			toolTip1.SetToolTip(label1, "The format to use to brute force");
 			// 
+			// cbRealTimeUpdates
+			// 
+			cbRealTimeUpdates.AutoSize = true;
+			cbRealTimeUpdates.Location = new Point(6, 73);
+			cbRealTimeUpdates.Name = "cbRealTimeUpdates";
+			cbRealTimeUpdates.Size = new Size(137, 19);
+			cbRealTimeUpdates.TabIndex = 7;
+			cbRealTimeUpdates.Text = "Real Time UI Updates";
+			toolTip1.SetToolTip(cbRealTimeUpdates, "Show real time UI updates while brute forcing\r\nNOTE: THIS MAY MAKE THE BRUTE FORCE SLOWER!");
+			cbRealTimeUpdates.UseVisualStyleBackColor = true;
+			cbRealTimeUpdates.CheckedChanged += cbRealTimeUpdates_CheckedChanged;
+			// 
+			// cbUnsigned
+			// 
+			cbUnsigned.AutoSize = true;
+			cbUnsigned.Location = new Point(6, 47);
+			cbUnsigned.Name = "cbUnsigned";
+			cbUnsigned.Size = new Size(121, 19);
+			cbUnsigned.TabIndex = 6;
+			cbUnsigned.Text = "Unsigned Integers";
+			toolTip1.SetToolTip(cbUnsigned, "Make all decimal integers in the output unsigned");
+			cbUnsigned.UseVisualStyleBackColor = true;
+			cbUnsigned.CheckedChanged += cbUnsigned_CheckedChanged;
+			// 
 			// gbHashOptions
 			// 
 			gbHashOptions.Anchor = AnchorStyles.Top;
 			gbHashOptions.AutoSize = true;
+			gbHashOptions.Controls.Add(cbRealTimeUpdates);
 			gbHashOptions.Controls.Add(cbUnsigned);
 			gbHashOptions.Controls.Add(cbStringHashMode);
 			gbHashOptions.Location = new Point(135, 12);
@@ -334,17 +360,6 @@
 			lblTimeRemaining.TabIndex = 0;
 			lblTimeRemaining.Text = "EST Time Remaining: 00:00:00";
 			// 
-			// cbUnsigned
-			// 
-			cbUnsigned.AutoSize = true;
-			cbUnsigned.Location = new Point(6, 47);
-			cbUnsigned.Name = "cbUnsigned";
-			cbUnsigned.Size = new Size(163, 19);
-			cbUnsigned.TabIndex = 6;
-			cbUnsigned.Text = "Unsigned Integers (TODO)";
-			cbUnsigned.UseVisualStyleBackColor = true;
-			cbUnsigned.Visible = false;
-			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -407,5 +422,6 @@
 		private Label lblOutput;
 		public Label lblTimeRemaining;
 		private CheckBox cbUnsigned;
+		private CheckBox cbRealTimeUpdates;
 	}
 }
