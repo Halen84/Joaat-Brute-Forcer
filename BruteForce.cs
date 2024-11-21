@@ -295,6 +295,16 @@ namespace JoaatBruteForcer
 		// Checks if the given string is a match to a hash in the hash list
 		private static void CheckString(string key)
 		{
+			if (Settings.bForceUppercase)
+			{
+				key = key.ToUpperInvariant();
+			}
+
+			if (Settings.bForceLowercase)
+			{
+				key = key.ToLowerInvariant();
+			}
+
 			uint hash = joaat(key);
 			if (_hashesToBruteForce.Contains(hash))
 			{
@@ -311,6 +321,17 @@ namespace JoaatBruteForcer
 			for (int i = 0; i < _stringsToHash.Count; i++)
 			{
 				string str = _stringsToHash[i];
+
+				if (Settings.bForceUppercase)
+				{
+					str = str.ToUpperInvariant();
+				}
+
+				if (Settings.bForceLowercase)
+				{
+					str = str.ToLowerInvariant();
+				}
+
 				uint hash = joaat(str);
 				AddStringToOutput(str, hash);
 			}

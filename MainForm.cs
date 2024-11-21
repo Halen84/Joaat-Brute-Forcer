@@ -51,7 +51,8 @@ namespace JoaatBruteForcer
 			if (cbStringHashMode.Checked) { return; }
 
 			gbHashOptions.Enabled = flag;
-			gbOutput.Enabled = flag;
+			//gbOutput.Enabled = flag;
+
 			btnSaveToFile.Enabled = flag;
 			tbHashList.ReadOnly = !flag;
 			tbHashList.BackColor = Color.White;
@@ -115,12 +116,6 @@ namespace JoaatBruteForcer
 			if (text.Split('{').Length - 1 != dictCount)
 			{
 				CMessageBox.Error("Invalid format. One or more '{' were not closed.");
-				return false;
-			}
-
-			if (dictCount > Settings.MAX_DICTIONARY_COUNT)
-			{
-				CMessageBox.Error("Invalid format. More than 10 dictionaries were provided.");
 				return false;
 			}
 
@@ -386,6 +381,28 @@ namespace JoaatBruteForcer
 
 		private void cbUnsigned_CheckedChanged(object sender, EventArgs e)
 		=> Settings.bUnsignedIntegers = cbUnsigned.Checked;
+
+		private void cbUppercase_CheckedChanged(object sender, EventArgs e)
+		{
+			if (cbLowercase.Checked && !Settings.bForceUppercase)
+			{
+				cbLowercase.Checked = false;
+				Settings.bForceLowercase = false;
+			}
+
+			Settings.bForceUppercase = cbUppercase.Checked;
+		}
+
+		private void cbLowercase_CheckedChanged(object sender, EventArgs e)
+		{
+			if (cbUppercase.Checked && !Settings.bForceLowercase)
+			{
+				cbUppercase.Checked = false;
+				Settings.bForceUppercase = false;
+			}
+
+			Settings.bForceLowercase = cbLowercase.Checked;
+		}
 
 		#endregion
 

@@ -55,6 +55,8 @@
 			lblOutput = new Label();
 			lblHashList = new Label();
 			lblTimeRemaining = new Label();
+			cbUppercase = new CheckBox();
+			cbLowercase = new CheckBox();
 			gbHashOptions.SuspendLayout();
 			gbOutput.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -221,7 +223,8 @@
 			// gbHashOptions
 			// 
 			gbHashOptions.Anchor = AnchorStyles.Top;
-			gbHashOptions.AutoSize = true;
+			gbHashOptions.Controls.Add(cbLowercase);
+			gbHashOptions.Controls.Add(cbUppercase);
 			gbHashOptions.Controls.Add(cbRealTimeUpdates);
 			gbHashOptions.Controls.Add(cbUnsigned);
 			gbHashOptions.Controls.Add(cbStringHashMode);
@@ -235,7 +238,6 @@
 			// gbOutput
 			// 
 			gbOutput.Anchor = AnchorStyles.Top;
-			gbOutput.AutoSize = true;
 			gbOutput.Controls.Add(tbCustomOutput);
 			gbOutput.Controls.Add(rbCustom);
 			gbOutput.Controls.Add(rbHexAndDec);
@@ -360,6 +362,28 @@
 			lblTimeRemaining.TabIndex = 0;
 			lblTimeRemaining.Text = "EST Time Remaining: 00:00:00";
 			// 
+			// cbUppercase
+			// 
+			cbUppercase.AutoSize = true;
+			cbUppercase.Location = new Point(6, 97);
+			cbUppercase.Name = "cbUppercase";
+			cbUppercase.Size = new Size(113, 19);
+			cbUppercase.TabIndex = 8;
+			cbUppercase.Text = "Force Uppercase";
+			cbUppercase.UseVisualStyleBackColor = true;
+			cbUppercase.CheckedChanged += cbUppercase_CheckedChanged;
+			// 
+			// cbLowercase
+			// 
+			cbLowercase.AutoSize = true;
+			cbLowercase.Location = new Point(6, 122);
+			cbLowercase.Name = "cbLowercase";
+			cbLowercase.Size = new Size(113, 19);
+			cbLowercase.TabIndex = 9;
+			cbLowercase.Text = "Force Lowercase";
+			cbLowercase.UseVisualStyleBackColor = true;
+			cbLowercase.CheckedChanged += cbLowercase_CheckedChanged;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
@@ -423,5 +447,7 @@
 		public Label lblTimeRemaining;
 		private CheckBox cbUnsigned;
 		private CheckBox cbRealTimeUpdates;
+		private CheckBox cbLowercase;
+		private CheckBox cbUppercase;
 	}
 }
